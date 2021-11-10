@@ -38,6 +38,6 @@ dockers:
   - image_templates:
       - 'neobaran/{{.ProjectName}}:{{ .Version }}'
       - 'neobaran/{{.ProjectName}}:latest'
-      - 'ccr.ccs.tencentyun.com/{{.ProjectName}}:latest'
+      - 'ccr.ccs.tencentyun.com/neobaran/{{.ProjectName}}:latest'
       - 'ccr.ccs.tencentyun.com/neobaran/{{.ProjectName}}:{{ .Version }}'
     dockerfile: Dockerfile.goreleaser
