@@ -34,10 +34,13 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+      - '^ci:'
 dockers:
   - image_templates:
-      - 'neobaran/{{.ProjectName}}:{{ .Version }}'
+      - 'neobaran/{{.ProjectName}}:{{.Version}}'
       - 'neobaran/{{.ProjectName}}:latest'
+      - 'ghcr.io/neobaran/{{.ProjectName}}:{{.Version}}'
+      - 'ghcr.io/neobaran/{{.ProjectName}}:latest'
       - 'ccr.ccs.tencentyun.com/neobaran/{{.ProjectName}}:latest'
-      - 'ccr.ccs.tencentyun.com/neobaran/{{.ProjectName}}:{{ .Version }}'
+      - 'ccr.ccs.tencentyun.com/neobaran/{{.ProjectName}}:{{.Version}}'
     dockerfile: Dockerfile.goreleaser
