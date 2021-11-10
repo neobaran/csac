@@ -4,19 +4,19 @@ project_name: csac
 
 before:
   hooks:
-    # You may remove this if you don't use go modules.
     - go mod tidy
-    # you may remove this if you don't need go generate
     - go generate ./...
+
 builds:
   - env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X main.Version={{.Version}}
+      - -s -w -X main.Version={{ .Version }}
     goos:
       - linux
       - windows
       - darwin
+
 archives:
   - replacements:
       darwin: Darwin
@@ -24,10 +24,17 @@ archives:
       windows: Windows
       386: i386
       amd64: x86_64
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+
 checksum:
   name_template: 'checksums.txt'
+
 snapshot:
-  name_template: 'v{{ incpatch .Version }}'
+  name_template: '{{ incpatch .Version }}'
+
 changelog:
   sort: asc
   filters:
@@ -35,12 +42,13 @@ changelog:
       - '^docs:'
       - '^test:'
       - '^ci:'
+
 dockers:
   - image_templates:
-      - 'neobaran/{{.ProjectName}}:{{.Version}}'
-      - 'neobaran/{{.ProjectName}}:latest'
-      - 'ghcr.io/neobaran/{{.ProjectName}}:{{.Version}}'
-      - 'ghcr.io/neobaran/{{.ProjectName}}:latest'
-      - 'ccr.ccs.tencentyun.com/neobaran/{{.ProjectName}}:latest'
-      - 'ccr.ccs.tencentyun.com/neobaran/{{.ProjectName}}:{{.Version}}'
+      - 'neobaran/{{ .ProjectName }}:{{ .Version }}'
+      - 'neobaran/{{ .ProjectName }}:latest'
+      - 'ghcr.io/neobaran/{{ .ProjectName }}:{{ .Version }}'
+      - 'ghcr.io/neobaran/{{ .ProjectName }}:latest'
+      - 'ccr.ccs.tencentyun.com/neobaran/{{ .ProjectName }}:latest'
+      - 'ccr.ccs.tencentyun.com/neobaran/{{ .ProjectName }}:{{ .Version }}'
     dockerfile: Dockerfile.goreleaser
