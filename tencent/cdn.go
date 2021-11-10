@@ -41,7 +41,6 @@ func (client *cdnClient) GetCDNDomains(certId *string) ([]*string, error) {
 }
 
 func (client *cdnClient) UpdateCDNConfig(domain *string, certId *string) error {
-
 	request := cdn.NewUpdateDomainConfigRequest()
 	request.Domain = domain
 	request.Https = &cdn.Https{

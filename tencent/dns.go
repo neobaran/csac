@@ -44,12 +44,12 @@ func (client *dnsPodClient) CreateRecordData(domainData *Domain, value string, T
 }
 
 func (client *dnsPodClient) ListRecordData(domainData *Domain) ([]*dnspod.RecordListItem, error) {
-	recordListRequest := dnspod.NewDescribeRecordListRequest()
-	recordListRequest.Domain = common.StringPtr(domainData.domain)
-	recordListRequest.Subdomain = common.StringPtr(domainData.subDomain)
-	recordListRequest.RecordType = common.StringPtr("TXT")
+	request := dnspod.NewDescribeRecordListRequest()
+	request.Domain = common.StringPtr(domainData.domain)
+	request.Subdomain = common.StringPtr(domainData.subDomain)
+	request.RecordType = common.StringPtr("TXT")
 
-	response, err := client.DescribeRecordList(recordListRequest)
+	response, err := client.DescribeRecordList(request)
 	if _, ok := err.(*errors.TencentCloudSDKError); ok {
 		return nil, err
 	}
@@ -61,10 +61,10 @@ func (client *dnsPodClient) ListRecordData(domainData *Domain) ([]*dnspod.Record
 }
 
 func (client *dnsPodClient) DeleteRecordData(domainData *Domain, item *dnspod.RecordListItem) error {
-	deleteRecordRequest := dnspod.NewDeleteRecordRequest()
-	deleteRecordRequest.Domain = common.StringPtr(domainData.domain)
-	deleteRecordRequest.RecordId = item.RecordId
-	_, err := client.DeleteRecord(deleteRecordRequest)
+	request := dnspod.NewDeleteRecordRequest()
+	request.Domain = common.StringPtr(domainData.domain)
+	request.RecordId = item.RecordId
+	_, err := client.DeleteRecord(request)
 
 	return err
 }
