@@ -1,0 +1,7 @@
+Email: your@email.com
+Tencent:
+  SecretId: your-tencent-cloud-secret-id
+  SecretKey: your-tencent-cloud-secret-key
+Domains:
+  - *.example.com
+TTL: 600
