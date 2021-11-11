@@ -5,7 +5,9 @@ on:
     tags: ['v*.*.*']
 
 permissions:
+  contents: read
   contents: write
+  packages: write
 
 jobs:
   goreleaser:
