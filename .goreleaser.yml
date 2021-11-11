@@ -51,3 +51,12 @@ dockers:
       - 'ghcr.io/neobaran/{{ .ProjectName }}:latest'
       - 'ccr.ccs.tencentyun.com/neobaran/{{ .ProjectName }}:latest'
       - 'ccr.ccs.tencentyun.com/neobaran/{{ .ProjectName }}:{{ .Version }}'
+    build_flag_templates:
+      - '--label=org.opencontainers.image.title={{ .ProjectName }}'
+      - '--label=org.opencontainers.image.description=Cloud Service Auto Cert'
+      - '--label=org.opencontainers.image.url={{ .GitURL }}'
+      - '--label=org.opencontainers.image.source={{ .GitURL }}'
+      - '--label=org.opencontainers.image.version={{ .Version }}'
+      - '--label=org.opencontainers.image.created={{ .Date }}'
+      - '--label=org.opencontainers.image.revision={{ .FullCommit }}'
+      - '--label=org.opencontainers.image.licenses=MIT'
