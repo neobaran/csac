@@ -1,5 +1,10 @@
 # CSAC (Cloud Service Auto Cert)
 
+[![](https://img.shields.io/github/release/neobaran/csac.svg?logo=github&style=flat-square)](https://github.com/neobaran/csac/releases/latest)
+![](https://img.shields.io/github/go-mod/go-version/neobaran/csac?style=flat-square)
+![](https://img.shields.io/github/workflow/status/neobaran/csac/release?style=flat-square)
+[![](https://img.shields.io/github/license/neobaran/csac?style=flat-square)](https://github.com/neobaran/csac/blob/master/LICENSE)
+
 ## Features
 
 - [x] [Tencent Cloud](https://cloud.tencent.com/)
