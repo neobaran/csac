@@ -17,7 +17,7 @@ type csac struct {
 	lego        *lego.Client
 }
 
-func NewCSACHelper(config *config.Config, cloudHelper *tencent.TencentCloudHelper) (*csac, error) {
+func NewCSACHelper(config *config.Config, cloudHelper *tencent.TencentCloudHelper, debug bool) (*csac, error) {
 
 	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
@@ -29,6 +29,9 @@ func NewCSACHelper(config *config.Config, cloudHelper *tencent.TencentCloudHelpe
 	}
 
 	legoConfig := lego.NewConfig(&user)
+	if debug {
+		legoConfig.CADirURL = lego.LEDirectoryStaging
+	}
 	client, err := lego.NewClient(legoConfig)
 	if err != nil {
 		return nil, err
