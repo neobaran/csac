@@ -48,3 +48,7 @@ docker run -v /path/to/config.yaml:/config.yaml neobaran/csac -c /config.yaml
 ```sh
 docker run --env-file .env neobaran/csac
 ```
+
+## Github Action
+
+[neobaran/csac-action](https://github.com/neobaran/csac-action)
