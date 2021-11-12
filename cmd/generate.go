@@ -12,7 +12,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func Generate(configFile string) {
+func Generate(configFile string, debug bool) {
 	appConfig := &config.Config{}
 	appConfig.TTL = 600
 
@@ -48,7 +48,7 @@ func Generate(configFile string) {
 
 	cloudHelper := tencent.NewTencentCloudHelp(appConfig.Tencent)
 
-	letsHelper, err := lets.NewCSACHelper(appConfig, cloudHelper)
+	letsHelper, err := lets.NewCSACHelper(appConfig, cloudHelper, debug)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -56,6 +56,11 @@ func Generate(configFile string) {
 	cert, err := letsHelper.CreateSSL(appConfig.Domains)
 	if err != nil {
 		log.Fatalln(err)
+	}
+
+	if debug {
+		log.Println("success", cert.CertURL)
+		return
 	}
 
 	if err := letsHelper.UploadToCloud(cert); err != nil {

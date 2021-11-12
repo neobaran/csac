@@ -10,7 +10,8 @@ import (
 var Version string
 
 var (
-	file string
+	file  string
+	debug bool
 )
 
 var rootCmd = &cobra.Command{
@@ -21,7 +22,7 @@ var rootCmd = &cobra.Command{
 		if len(file) == 0 {
 			file = "config.yaml"
 		}
-		command.Generate(file)
+		command.Generate(file, debug)
 	},
 }
 
@@ -37,6 +38,7 @@ var versionCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.Flags().StringVarP(&file, "config", "c", "", "config file")
+	rootCmd.Flags().BoolVarP(&debug, "debug", "d", false, "debug mode")
 }
 
 func main() {
