@@ -10,4 +10,5 @@ type Config struct {
 	Domains []string          `yaml:"Domains"`
 	Tencent TencentCredential `yaml:"Tencent"`
 	TTL     uint64            `yaml:"TTL"`
+	KeyType string            `yaml:"KeyType"`
 }

@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/neobaran/csac/config"
 	"github.com/neobaran/csac/lets"
@@ -34,6 +35,7 @@ func Generate(configFile string, debug bool) {
 		if TTL, err := strconv.ParseUint(os.Getenv(envNamespace+"TTL"), 10, 64); err == nil {
 			appConfig.TTL = TTL
 		}
+		appConfig.KeyType = os.Getenv(envNamespace + "KEY_TYPE")
 	}
 
 	if len(appConfig.Email) == 0 {
@@ -44,6 +46,12 @@ func Generate(configFile string, debug bool) {
 	}
 	if len(appConfig.Tencent.SecretId) == 0 || len(appConfig.Tencent.SecretKey) == 0 {
 		log.Fatal("SecretId or SecretKey is missing")
+	}
+	if len(appConfig.KeyType) == 0 {
+		appConfig.KeyType = "RSA2048"
+	}
+	if _, ok := lets.KeyTypes[strings.ToUpper(appConfig.KeyType)]; !ok {
+		log.Fatal("Key type to use for private keys. Supported: rsa2048, rsa4096, rsa8192, ec256, ec384.(default: \"rsa2048\")")
 	}
 
 	cloudHelper := tencent.NewTencentCloudHelp(appConfig.Tencent)
