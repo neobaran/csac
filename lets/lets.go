@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
+	"strings"
 
 	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/go-acme/lego/v4/certificate"
@@ -38,7 +39,7 @@ func NewCSACHelper(config *config.Config, cloudHelper *tencent.TencentCloudHelpe
 	}
 
 	legoConfig := lego.NewConfig(&user)
-	legoConfig.Certificate.KeyType = KeyTypes[config.KeyType]
+	legoConfig.Certificate.KeyType = KeyTypes[strings.ToUpper(config.KeyType)]
 	if debug {
 		legoConfig.CADirURL = lego.LEDirectoryStaging
 	}
