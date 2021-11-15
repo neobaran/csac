@@ -4,13 +4,23 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
+	"strings"
 
+	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/go-acme/lego/v4/certificate"
 	"github.com/go-acme/lego/v4/lego"
 	"github.com/go-acme/lego/v4/registration"
 	"github.com/neobaran/csac/config"
 	"github.com/neobaran/csac/tencent"
 )
+
+var KeyTypes = map[string]certcrypto.KeyType{
+	"EC256":   certcrypto.EC256,
+	"EC384":   certcrypto.EC384,
+	"RSA2048": certcrypto.RSA2048,
+	"RSA4096": certcrypto.RSA4096,
+	"RSA8192": certcrypto.RSA8192,
+}
 
 type csac struct {
 	cloudHelper *tencent.TencentCloudHelper
@@ -29,6 +39,7 @@ func NewCSACHelper(config *config.Config, cloudHelper *tencent.TencentCloudHelpe
 	}
 
 	legoConfig := lego.NewConfig(&user)
+	legoConfig.Certificate.KeyType = KeyTypes[strings.ToUpper(config.KeyType)]
 	if debug {
 		legoConfig.CADirURL = lego.LEDirectoryStaging
 	}
