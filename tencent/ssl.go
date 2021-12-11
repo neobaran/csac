@@ -22,6 +22,7 @@ func (helper *TencentCloudHelper) NewSSLClient() *sslClient {
 	}
 }
 
+// UploadCertificateData 上传证书信息
 func (client *sslClient) UploadCertificateData(publicKey string, privateKey string) (*string, error) {
 	request := ssl.NewUploadCertificateRequest()
 

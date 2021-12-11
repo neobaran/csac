@@ -23,6 +23,7 @@ func (helper *TencentCloudHelper) NewDNSPodClient() *dnsPodClient {
 	}
 }
 
+// CreateRecordData 创建dns记录
 func (client *dnsPodClient) CreateRecordData(domainData *Domain, value string, TTL uint64) error {
 	request := dnspod.NewCreateRecordRequest()
 	request.Domain = common.StringPtr(domainData.domain)

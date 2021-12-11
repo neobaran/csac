@@ -9,6 +9,7 @@ import (
 	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/go-acme/lego/v4/certificate"
 	"github.com/go-acme/lego/v4/lego"
+	"github.com/go-acme/lego/v4/log"
 	"github.com/go-acme/lego/v4/registration"
 	"github.com/neobaran/csac/config"
 	"github.com/neobaran/csac/tencent"
@@ -25,6 +26,7 @@ var KeyTypes = map[string]certcrypto.KeyType{
 type csac struct {
 	cloudHelper *tencent.TencentCloudHelper
 	lego        *lego.Client
+	debug       bool
 }
 
 func NewCSACHelper(config *config.Config, cloudHelper *tencent.TencentCloudHelper, debug bool) (*csac, error) {
@@ -63,6 +65,7 @@ func NewCSACHelper(config *config.Config, cloudHelper *tencent.TencentCloudHelpe
 	return &csac{
 		lego:        client,
 		cloudHelper: cloudHelper,
+		debug:       debug,
 	}, nil
 }
 
@@ -97,7 +100,10 @@ func (t *csac) UploadToCloud(resource *certificate.Resource) error {
 
 	// 更新 CDN 证书
 	for _, item := range domains {
-		_ = cdnClient.UpdateCDNConfig(item, certId)
+		log.Infof("[%s] Updating CDN domain: %s", *certId, *item)
+		if err := cdnClient.UpdateCDNConfig(item, certId); err != nil && t.debug {
+			log.Warnf("[%s] Failed to update CDN domain: %s, err: %s", *certId, *item, err.Error())
+		}
 	}
 
 	return nil
