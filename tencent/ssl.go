@@ -1,6 +1,7 @@
 package tencent
 
 import (
+	"github.com/go-acme/lego/v4/log"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
@@ -36,5 +37,6 @@ func (client *sslClient) UploadCertificateData(publicKey string, privateKey stri
 		return nil, err
 	}
 
+	log.Infof("UploadCertificate response: %+v", response.ToJsonString())
 	return response.Response.CertificateId, nil
 }

@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	CDNPRODUCT_CDN  = "cdn"
-	CDNPRODUCT_ECDN = "ecdn"
+	CDN  = "cdn"
+	ECDN = "ecdn"
 )
 
 type cdnClient struct {
@@ -61,6 +61,6 @@ func (client *cdnClient) UpdateCDNConfig(domain *string, certId *string) error {
 		return err
 	}
 
-	log.Infof("Update CDN domain %s, response: %s", domain, response.ToJsonString())
+	log.Infof("Update CDN domain [%s], response: %s", *domain, response.ToJsonString())
 	return nil
 }
