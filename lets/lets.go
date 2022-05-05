@@ -4,11 +4,13 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
+	"fmt"
 	"strings"
 
 	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/go-acme/lego/v4/certificate"
 	"github.com/go-acme/lego/v4/lego"
+	"github.com/go-acme/lego/v4/log"
 	"github.com/go-acme/lego/v4/registration"
 	"github.com/neobaran/csac/config"
 	"github.com/neobaran/csac/tencent"
@@ -90,13 +92,16 @@ func (t *csac) UploadToCloud(resource *certificate.Resource) error {
 	}
 
 	// 获取证书可用 CDN 域名
-	domains, err := cdnClient.GetCDNDomains(certId)
+	domains, err := cdnClient.GetCDNDomains(certId, tencent.CDNPRODUCT_CDN)
 	if err != nil {
 		return err
 	}
 
+	log.Infof("[%s] Find %s domains for certificate %s", certId, fmt.Sprint(len(domains)))
+
 	// 更新 CDN 证书
 	for _, item := range domains {
+		log.Infof("[%s] Start to update CDN domain %s", certId, item)
 		_ = cdnClient.UpdateCDNConfig(item, certId)
 	}
 
