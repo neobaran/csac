@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"io/ioutil"
-	"log"
 	"os"
 	"strconv"
 	"strings"
 
+	"github.com/go-acme/lego/v4/log"
 	"github.com/neobaran/csac/config"
 	"github.com/neobaran/csac/lets"
 	"github.com/neobaran/csac/tencent"
@@ -31,7 +31,7 @@ func Generate(configFile string, debug bool) {
 		appConfig.Email = os.Getenv(envNamespace + "EMAIL")
 		appConfig.Tencent.SecretId = os.Getenv(envNamespace + "TENCENT_SECRET_ID")
 		appConfig.Tencent.SecretKey = os.Getenv(envNamespace + "TENCENT_SECRET_KEY")
-		appConfig.Domains = append(appConfig.Domains, os.Getenv(envNamespace+"DOMAIN"))
+		appConfig.Domains = strings.Split(os.Getenv(envNamespace+"DOMAIN"), ",")
 		if TTL, err := strconv.ParseUint(os.Getenv(envNamespace+"TTL"), 10, 64); err == nil {
 			appConfig.TTL = TTL
 		}
@@ -58,12 +58,13 @@ func Generate(configFile string, debug bool) {
 
 	letsHelper, err := lets.NewCSACHelper(appConfig, cloudHelper, debug)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 
+	log.Infof("Generating certificates...")
 	cert, err := letsHelper.CreateSSL(appConfig.Domains)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 
 	if debug {
@@ -71,7 +72,8 @@ func Generate(configFile string, debug bool) {
 		return
 	}
 
+	log.Infof("Uploading certificates to TencentCloud...")
 	if err := letsHelper.UploadToCloud(cert); err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 }

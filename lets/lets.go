@@ -4,11 +4,15 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
+	"fmt"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/go-acme/lego/v4/certificate"
 	"github.com/go-acme/lego/v4/lego"
+	"github.com/go-acme/lego/v4/log"
 	"github.com/go-acme/lego/v4/registration"
 	"github.com/neobaran/csac/config"
 	"github.com/neobaran/csac/tencent"
@@ -21,6 +25,8 @@ var KeyTypes = map[string]certcrypto.KeyType{
 	"RSA4096": certcrypto.RSA4096,
 	"RSA8192": certcrypto.RSA8192,
 }
+
+var wg sync.WaitGroup
 
 type csac struct {
 	cloudHelper *tencent.TencentCloudHelper
@@ -90,15 +96,36 @@ func (t *csac) UploadToCloud(resource *certificate.Resource) error {
 	}
 
 	// 获取证书可用 CDN 域名
-	domains, err := cdnClient.GetCDNDomains(certId)
+	log.Infof("Start get CDN domain")
+	domains, err := cdnClient.GetCDNDomains(certId, tencent.CDN)
+	if err != nil {
+		return err
+	}
+	time.Sleep(time.Second)
+	// 获取证书可用 ECDN 域名
+	log.Infof("Start get ECDN domains")
+	ecdnDomains, err := cdnClient.GetCDNDomains(certId, tencent.ECDN)
 	if err != nil {
 		return err
 	}
 
+	domains = append(domains, ecdnDomains...)
+	log.Infof("[%s] Find %s domains for certificate %s", *certId, fmt.Sprint(len(domains)))
+
 	// 更新 CDN 证书
+	ch := make(chan struct{}, 10)
 	for _, item := range domains {
-		_ = cdnClient.UpdateCDNConfig(item, certId)
+		ch <- struct{}{}
+		wg.Add(1)
+		go func(domain *string) {
+			defer wg.Done()
+			log.Infof("[%s] Start to update CDN domain %s", *certId, *domain)
+			_ = cdnClient.UpdateCDNConfig(domain, certId)
+			time.Sleep(time.Second)
+			<-ch
+		}(item)
 	}
+	wg.Wait()
 
 	return nil
 }

@@ -1,11 +1,16 @@
 package tencent
 
 import (
-	"fmt"
-
+	"github.com/go-acme/lego/v4/log"
 	cdn "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn/v20180606"
+	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
+)
+
+const (
+	CDN  = "cdn"
+	ECDN = "ecdn"
 )
 
 type cdnClient struct {
@@ -23,9 +28,10 @@ func (helper *TencentCloudHelper) NewCDNClient() *cdnClient {
 	}
 }
 
-func (client *cdnClient) GetCDNDomains(certId *string) ([]*string, error) {
+func (client *cdnClient) GetCDNDomains(certId *string, Product string) ([]*string, error) {
 	request := cdn.NewDescribeCertDomainsRequest()
 	request.CertId = certId
+	request.Product = &Product
 
 	response, err := client.DescribeCertDomains(request)
 	if _, ok := err.(*errors.TencentCloudSDKError); ok {
@@ -34,9 +40,6 @@ func (client *cdnClient) GetCDNDomains(certId *string) ([]*string, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Printf("%s", response.ToJsonString())
-
 	return response.Response.Domains, nil
 }
 
@@ -44,12 +47,13 @@ func (client *cdnClient) UpdateCDNConfig(domain *string, certId *string) error {
 	request := cdn.NewUpdateDomainConfigRequest()
 	request.Domain = domain
 	request.Https = &cdn.Https{
+		Switch: common.StringPtr("on"),
 		CertInfo: &cdn.ServerCert{
 			CertId: certId,
 		},
 	}
 
-	_, err := client.UpdateDomainConfig(request)
+	response, err := client.UpdateDomainConfig(request)
 	if _, ok := err.(*errors.TencentCloudSDKError); ok {
 		return err
 	}
@@ -57,5 +61,6 @@ func (client *cdnClient) UpdateCDNConfig(domain *string, certId *string) error {
 		return err
 	}
 
+	log.Infof("Update CDN domain [%s], response: %s", *domain, response.ToJsonString())
 	return nil
 }
